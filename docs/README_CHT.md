@@ -8,11 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-Ready-2088FF?logo=github-actions&logoColor=white)](https://github.com/features/actions)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/zhulinsen/daily_stock_analysis)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)]
 
-<p align="center">
-  <a href="https://trendshift.io/repositories/18527?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-18527" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/18527" alt="ZhuLinsen%2Fdaily_stock_analysis | Trendshift" width="250" height="55"/></a>&nbsp;<a href="https://hellogithub.com/repository/anbeime/stock" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=6daa16e405ce46ed97b4a57706aeb29f&claim_uid=pfiJMqhR9uvDGlT&theme=neutral" alt="Featured｜HelloGitHub" width="230" /></a>
-</p>
 
 **基於 AI 大模型的 A股/港股/美股/日股/韓股/台股自選股智能分析系統**
 
@@ -24,22 +21,11 @@
 
 </div>
 
-<details open>
-<summary><strong>💖 贊助商 (Sponsors)</strong></summary>
-<hr>
-<div align="center">
-  <p><a href="https://modelflare.dev/sign-up?utm_source=github&amp;utm_campaign=daily_stock_analysis"><img src="assets/modelflare_banner_cht.png" alt="Modelflare" width="720"></a><br>感謝 <strong>Modelflare</strong> 贊助本項目！由美國 Havenbyte LLC 營運，滿血穩定不摻水，低成本接入 GPT、Claude、Gemini、Grok 及 40+ 圖片/影片模型。指定 OpenAI 分組提供 <strong>65% / 75% / 85% 每日快取命中率保障</strong>；單筆儲值 <strong>US$20 解鎖 GPT 0.015x</strong>，<strong>US$50 解鎖 Claude 0.03x</strong>。<a href="https://modelflare.dev/sign-up?utm_source=github&amp;utm_campaign=daily_stock_analysis">專屬連結註冊</a></p>
-  <hr>
-  <p>
-    <a href="https://serpapi.com/github-daily-stock-analysis" target="_blank"><img src="assets/serpapi_banner_zh.png" alt="輕鬆抓取搜尋引擎上的即時金融新聞數據 - SerpApi" width="300" height="141" style="width: 300px; height: 141px; object-fit: contain;"></a>
-  </p>
-</div>
-</details>
 
 ## 🖥️ 產品預覽
 
 <p align="center">
-  <img src="assets/readme_workspace_tour_20260510.gif" alt="TOPGO Web 工作台演示" width="720">
+  <video src="assets/topgo-workbench-demo.mp4" controls muted playsinline width="720" poster="assets/sample.png"></video>
 </p>
 
 ## ✨ 功能特性
@@ -59,16 +45,16 @@
 
 | 類型 | 支援 |
 |------|------|
-| AI 模型 | [Modelflare](https://modelflare.dev/sign-up?utm_source=github&utm_campaign=daily_stock_analysis)、[AIHubMix](https://inferera.com/?aff=CfMq)、Gemini、OpenAI 兼容、DeepSeek、通義千問、Claude、Ollama 本地模型等 |
+| AI 模型 | Modelflare、AIHubMix、Gemini、OpenAI 兼容、DeepSeek、通義千問、Claude、Ollama 本地模型等 |
 | 行情數據 | AkShare、Tushare、Pytdx、Baostock、YFinance、Longbridge |
-| 新聞搜尋 | [SerpAPI](https://serpapi.com/github-daily-stock-analysis)、[Anspire](https://open.anspire.cn/dsa?share_code=QFBC0FYC)、[Tavily](https://tavily.com/)、[Bocha](https://open.bocha.cn/)、[Brave](https://brave.com/search/api/)、[MiniMax](https://platform.minimaxi.com/)、SearXNG |
+| 新聞搜尋 | SerpAPI、Anspire、Tavily、Bocha、Brave、MiniMax、SearXNG |
 | 社交輿情 | [Stock Sentiment API](https://api.adanos.org/docs)（Reddit / X / Polymarket，僅美股，可選） |
 
 > 專案預設內建 AkShare、Baostock、YFinance 等免費行情源，可零配置執行；免費源受上游限流、介面變動和網路波動影響，穩定性不保證。長期定時、批量分析或更穩定行情建議配置 Tushare、Longbridge 等 token 型數據源，適用市場、Actions 映射和 fallback 規則見 [數據源配置](./full-guide.md#数据源配置)。
 
 ## 🚀 快速開始
 
-### 方式一：[GitHub Actions（推薦）](https://www.bilibili.com/video/BV11FEb66EXG/)
+### 方式一：GitHub Actions（推薦）
 
 > 5 分鐘完成部署，零成本，無需伺服器。
 
@@ -86,8 +72,8 @@
 
 | Secret 名稱 | 說明 | 必填 |
 |-------------|------|:----:|
-| `MODELFLARE_KEY` | [Modelflare](https://modelflare.dev/sign-up?utm_source=github&utm_campaign=daily_stock_analysis) API Key，低成本接入全球熱門大模型 | **推薦** |
-| `AIHUBMIX_KEY` | [AIHubMix](https://inferera.com/?aff=CfMq) API Key，一 Key 切換使用全系模型，本項目可享 10% 優惠 | **推薦** |
+| `MODELFLARE_KEY` | Modelflare API Key，低成本接入全球熱門大模型 | **推薦** |
+| `AIHUBMIX_KEY` | AIHubMix API Key，一 Key 切換使用全系模型，本項目可享 10% 優惠 | **推薦** |
 | `GEMINI_API_KEY` | Google Gemini API Key | 可選 |
 | `ANTHROPIC_API_KEY` | Anthropic Claude API Key | 可選 |
 | `OPENAI_API_KEY` | OpenAI 兼容 API Key（支援 DeepSeek、通義千問等） | 可選 |
@@ -120,12 +106,12 @@
 
 | Secret 名稱 | 說明 | 必填 |
 |-------------|------|:----:|
-| `SERPAPI_API_KEYS` | [SerpAPI](https://serpapi.com/github-daily-stock-analysis)：搜尋引擎結果補強，適合即時金融新聞 | **推薦** |
-| `ANSPIRE_API_KEYS` | [Anspire](https://open.anspire.cn/dsa?share_code=QFBC0FYC) 搜尋 API Key，可與其模型網關共用 | 可選 |
-| `TAVILY_API_KEYS` | [Tavily](https://tavily.com/)：通用新聞搜尋 API | 可選 |
+| `SERPAPI_API_KEYS` | SerpAPI：搜尋引擎結果補強，適合即時金融新聞 | **推薦** |
+| `ANSPIRE_API_KEYS` | Anspire 搜尋 API Key，可與其模型網關共用 | 可選 |
+| `TAVILY_API_KEYS` | Tavily：通用新聞搜尋 API | 可選 |
 | `BOCHA_API_KEYS` | [博查搜尋](https://open.bocha.cn/)：中文搜尋優化，支援 AI 摘要 | 可選 |
 | `BRAVE_API_KEYS` | [Brave Search](https://brave.com/search/api/)：隱私優先，美股資訊補強 | 可選 |
-| `MINIMAX_API_KEYS` | [MiniMax](https://platform.minimaxi.com/)：結構化搜尋結果 | 可選 |
+| `MINIMAX_API_KEYS` | MiniMax：結構化搜尋結果 | 可選 |
 | `SEARXNG_BASE_URLS` | SearXNG 自建實例：無配額兜底，適合私有部署 | 可選 |
 
 更多搜尋源、社交輿情和降級規則見 [搜尋服務配置](./full-guide.md#搜索服务配置)。
@@ -154,7 +140,7 @@
 
 預設每個工作日 18:00（北京時間）自動執行，也可手動觸發。預設非交易日（含 A/H/US 節假日）不執行；強制運行、交易日檢查、斷點續傳等規則見 [完整指南](./full-guide.md#定时任务配置)。
 
-### 方式二：[客戶端配置教程](https://www.bilibili.com/video/BV11FEb66Eyr/) / 本地運行 / Docker 部署
+### 方式二：本地運行 / Docker 部署
 
 ```bash
 # 克隆項目
@@ -249,32 +235,15 @@ python main.py --webui-only
 
 > Agent 具體參數、`skill` 命名兼容、多 Agent 模式和預算護欄見 [完整指南](./full-guide.md#本地-webui-管理界面) 與 [LLM 配置指南](./LLM_CONFIG_GUIDE.md)。
 
-## 🧩 相關項目 (Related Projects)
-
-> TOPGO 聚焦日常分析報告；內建選股實作參考 AlphaSift，AlphaEvo 用於策略驗證與進化。
-
-| 項目 | 定位 |
-|------|------|
-| [AlphaSift](https://github.com/ZhuLinsen/alphasift) | TOPGO 內建選股引擎的參考專案 |
-| [AlphaEvo](https://github.com/ZhuLinsen/alphaevo) | 策略回測與自我進化，用於驗證策略規則，並透過迭代探索策略參數與組合 |
-
 ## 📬 聯繫與合作
 
 <table>
   <tr>
     <td width="92" valign="top"><strong>合作郵箱</strong></td>
     <td valign="top">
-      <a href="mailto:zhuls345@gmail.com">zhuls345@gmail.com</a><br>
+      <a href="mailto:anbeime@qq.com">anbeime@qq.com</a><br>
       項目諮詢、部署支援與功能擴展
     </td>
-    <td align="center" rowspan="3" valign="middle" width="148">
-      <a href="http://xhslink.com/m/tU520DWCKT" target="_blank"><img src="assets/xiaohongshu_tick.jpg" width="112" alt="小紅書二維碼"></a><br>
-      <sub>掃碼關注小紅書</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="92" valign="top"><strong>小紅書</strong></td>
-    <td valign="top"><a href="http://xhslink.com/m/tU520DWCKT">歡迎關注小紅書</a></td>
   </tr>
   <tr>
     <td width="92" valign="top"><strong>問題反饋</strong></td>
@@ -284,7 +253,7 @@ python main.py --webui-only
 
 ## 📄 License
 
-[MIT License](../LICENSE) © 2026 ZhuLinsen
+[MIT License](../LICENSE) © 2026 TOPGO
 
 如果你在項目中使用或基於本項目進行二次開發，非常歡迎在 README 或文檔中註明來源並附上本倉庫鏈接。
 
