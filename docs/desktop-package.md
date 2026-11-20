@@ -1,6 +1,8 @@
-# 桌面端打包说明 (Electron + React UI)
+# TOPGO 桌面端打包说明 (Electron + React UI)
 
-本项目可打包为桌面应用，使用 Electron 作为桌面壳，`apps/dsa-web` 的 React UI 作为界面。
+> **品牌说明**：品牌已全链路统一：产品名/应用名/产物名/包名均为 `TOPGO` / `topgo-*`；源码目录 `apps/topgo-web`、`apps/topgo-desktop` 为工程内部路径（不影响对外品牌，保留）。从旧版本升级时，`migrateLegacyUserDataDir()` 会把旧 `%APPDATA%/Daily Stock Analysis` 下的 `.env`、数据库、日志一次性迁到新 `%APPDATA%/TOPGO`（目标已存在则不覆盖）。其他项目复用本方案时按文末「跨项目复用改造清单」替换。
+
+TOPGO 可打包为桌面应用，使用 Electron 作为桌面壳，`apps/topgo-web` 的 React UI 作为界面。
 
 ## 架构说明
 
@@ -25,7 +27,7 @@ powershell -ExecutionPolicy Bypass -File scripts\run-desktop.ps1
 1) 构建 React UI（输出到 `static/`）
 
 ```bash
-cd apps/dsa-web
+cd apps/topgo-web
 npm install
 npm run build
 ```
@@ -33,7 +35,7 @@ npm run build
 2) 启动 Electron 应用（自动拉起后端）
 
 ```bash
-cd apps/dsa-desktop
+cd apps/topgo-desktop
 npm install
 npm run dev
 ```
@@ -72,11 +74,11 @@ powershell -ExecutionPolicy Bypass -File scripts\build-all.ps1
   - 推送语义化 tag（如 `v3.2.12`）后自动触发
   - 在 Actions 页面手动触发并指定 `release_tag`
 - 产物：
-  - Windows 安装包：Release 附件和本地 `apps/dsa-desktop/dist/` 中统一为 `daily-stock-analysis-windows-installer-<tag>.exe`
+  - Windows 安装包：Release 附件和本地 `apps/topgo-desktop/dist/` 中统一为 `topgo-windows-installer-<tag>.exe`
   - Windows 自动更新元数据：Release 附件会额外保留 `latest.yml` 和 `*.blockmap`，供安装版桌面端后台下载与校验更新；普通用户无需手动下载这些元数据。下载完成后用户确认“重启安装”时，桌面端会先停止内置后端、备份运行时文件，并以静默模式执行安装器。
-  - Windows 免安装包：`daily-stock-analysis-windows-noinstall-<tag>.zip`
-  - macOS Intel：`daily-stock-analysis-macos-x64-<tag>.dmg`
-  - macOS Apple Silicon：`daily-stock-analysis-macos-arm64-<tag>.dmg`
+  - Windows 免安装包：`topgo-windows-noinstall-<tag>.zip`
+  - macOS Intel：`topgo-macos-x64-<tag>.dmg`
+  - macOS Apple Silicon：`topgo-macos-arm64-<tag>.dmg`
 
 ### macOS 提示“应用已损坏，无法打开”
 
@@ -84,13 +86,13 @@ powershell -ExecutionPolicy Bypass -File scripts\build-all.ps1
 
 请按以下顺序排查：
 
-1. 只从项目的 [GitHub Releases](https://github.com/anbeime/stock/releases) 下载附件，并确认安装包架构与 Mac 一致：Apple 芯片（M1/M2/M3/M4 等）使用 `daily-stock-analysis-macos-arm64-<tag>.dmg`，Intel 芯片使用 `daily-stock-analysis-macos-x64-<tag>.dmg`。不要对第三方转载或来源不明的安装包绕过 Gatekeeper。
-2. 打开 DMG，将 `Daily Stock Analysis` 拖入“应用程序”后尝试启动一次。若被拦截，进入“系统设置 -> 隐私与安全性”，在安全性提示处确认应用名称，然后点击“仍要打开”，按系统提示再次确认。较旧 macOS 的对应入口为“系统偏好设置 -> 安全性与隐私 -> 通用”。
+1. 只从项目的 [GitHub Releases](https://github.com/anbeime/stock/releases) 下载附件，并确认安装包架构与 Mac 一致：Apple 芯片（M1/M2/M3/M4 等）使用 `topgo-macos-arm64-<tag>.dmg`，Intel 芯片使用 `topgo-macos-x64-<tag>.dmg`。不要对第三方转载或来源不明的安装包绕过 Gatekeeper。
+2. 打开 DMG，将 `TOPGO` 拖入“应用程序”后尝试启动一次。若被拦截，进入“系统设置 -> 隐私与安全性”，在安全性提示处确认应用名称，然后点击“仍要打开”，按系统提示再次确认。较旧 macOS 的对应入口为“系统偏好设置 -> 安全性与隐私 -> 通用”。
 3. 仅当安装包确认来自上述官方 Release、且“仍要打开”仍无法放行时，打开“终端”清除该应用的下载隔离属性，然后重新启动：
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/Daily Stock Analysis.app"
-open "/Applications/Daily Stock Analysis.app"
+xattr -dr com.apple.quarantine "/Applications/TOPGO.app"
+open "/Applications/TOPGO.app"
 ```
 
 如果应用不在 `/Applications`，请将命令中的路径替换为实际 `.app` 路径。不要对整个“应用程序”目录执行 `xattr`，也不要对来源不明的应用执行此命令。不同 macOS 版本可能仍拒绝 unsigned 应用，清除 quarantine 不保证能够放行。长期彻底消除该提示需要在发布流程中接入 Apple Developer 签名与 notarization（公证），不属于上述临时放行步骤。
@@ -98,8 +100,8 @@ open "/Applications/Daily Stock Analysis.app"
 维护者可用以下命令区分“预期的 unsigned 拒绝”和“不可发布的残缺签名”：
 
 ```bash
-codesign -d "/Applications/Daily Stock Analysis.app"
-spctl --assess --type execute --verbose=4 "/Applications/Daily Stock Analysis.app"
+codesign -d "/Applications/TOPGO.app"
+spctl --assess --type execute --verbose=4 "/Applications/TOPGO.app"
 ```
 
 当前 unsigned 产物的 `codesign -d` 预期包含 `code object is not signed at all`，`spctl` 预期拒绝；如果输出 `code has no resources but signature indicates they must be present` 或其它签名损坏信息，应视为发布阻断。
@@ -116,12 +118,12 @@ spctl --assess --type execute --verbose=4 "/Applications/Daily Stock Analysis.ap
 
 说明：该清单专注于 Windows NSIS 安装版与 `electron-updater` 发布元数据。当前 Linux 环境无法直接产出 Windows 安装包和 updater 元数据（`latest.yml` / `*.blockmap`），此类链路需在 Windows 发布执行器或 Windows 本机环境复核。
 
-若在非 Windows 环境无法完成上述验证，请在 PR 验收说明中明确补齐 Windows 发布链路复核人、复核时间窗及 `desktop-release` 产物检查结果（release/tag 与 `daily-stock-analysis-windows-installer-<tag>.exe`、`latest.yml`、`*.blockmap` 版本一致性与可下载性）。
+若在非 Windows 环境无法完成上述验证，请在 PR 验收说明中明确补齐 Windows 发布链路复核人、复核时间窗及 `desktop-release` 产物检查结果（release/tag 与 `topgo-windows-installer-<tag>.exe`、`latest.yml`、`*.blockmap` 版本一致性与可下载性）。
 
 1. 先构建 Web 静态产物（桌面端主窗口与设置页入口依赖）
 
 ```bash
-cd apps/dsa-web
+cd apps/topgo-web
 npm ci
 npm run lint
 npm run build
@@ -130,7 +132,7 @@ npm run build
 2. 回到桌面端，补齐依赖、运行 preload 单测、再执行 Electron 打包
 
 ```bash
-cd ../dsa-desktop
+cd ../topgo-desktop
 npm ci
 npm test
 npm run build
@@ -139,7 +141,7 @@ npm run build
 在 Windows 发布复核环境，还可额外执行：
 
 ```powershell
-./scripts/verify-desktop-updater-artifacts.ps1 -ReleaseTag v$(node -p "require('./apps/dsa-desktop/package.json').version")
+./scripts/verify-desktop-updater-artifacts.ps1 -ReleaseTag v$(node -p "require('./apps/topgo-desktop/package.json').version")
 ```
 
 > 预期当前执行环境不支持生成 Windows NSIS 安装器时，请在交付说明中明确注明平台限制，并要求指定的 Windows 发布链路复核人补齐该项验证。
@@ -157,7 +159,7 @@ ls -1 dist/*.yml dist/*.blockmap 2>/dev/null || true
 RELEASE_TAG="v$(node -p \"require('./package.json').version\")"
 REPO="anbeime/stock"
 
-for f in dist/*latest.yml dist/*.blockmap dist/daily-stock-analysis-windows-installer-*.exe; do
+for f in dist/*latest.yml dist/*.blockmap dist/topgo-windows-installer-*.exe; do
   [ -f \"$f\" ] && echo \"[FOUND] $f\"
 done
 
@@ -170,7 +172,7 @@ echo \"---- Release 清单（人工核对）----\"
 echo \"Release Tag: $RELEASE_TAG\"
 echo \"Release 地址: https://github.com/$REPO/releases/tag/$RELEASE_TAG\"
 echo \"应核对附件是否包含:\"
-echo \"- daily-stock-analysis-windows-installer-*.exe\"
+echo \"- topgo-windows-installer-*.exe\"
 echo \"- latest.yml\"
 echo \"- *.blockmap\"
 echo \"并确保 latest.yml 中 version 与 tag 的语义化版本一致，path/url 与安装包附件名一致\"
@@ -190,8 +192,8 @@ ls -1 dist/*.yml dist/*.blockmap dist/*installer*.exe 2>/dev/null | sort
 
 Windows 发布链路复核清单（在 PR 后由发布团队/维护者执行）：
 
-- release/tag 与 `daily-stock-analysis-windows-installer-<tag>.exe` 的版本号一致；
-- `latest.yml`、`daily-stock-analysis-windows-installer-<tag>.exe`、`*.blockmap` 同 tag 同步出现且可下载；
+- release/tag 与 `topgo-windows-installer-<tag>.exe` 的版本号一致；
+- `latest.yml`、`topgo-windows-installer-<tag>.exe`、`*.blockmap` 同 tag 同步出现且可下载；
 - `latest.yml` 中 `version` 与 Release tag 语义一致（去掉 `v` 前缀后比对），且 `path` / `files.url` 与安装包附件名一致；
 - 如缺少上述文件或 `release-tag` 不匹配，需标注阻断并补齐 `desktop-release` 打包流程。
 
@@ -199,7 +201,7 @@ Windows 发布链路复核清单（在 PR 后由发布团队/维护者执行）�
 
    1. 安装前后分别记录安装目录中的 `.env`、`data/stock_analysis.db`、`data/stock_analysis.db-wal`、`data/stock_analysis.db-shm`、`logs/desktop.log` 的 SHA256；
    2. 确认桌面端下一次启动后，上述文件仍存在且与安装前记录一致；
-   3. 如不一致，可在应用退出后检查用户数据目录中的 `.dsa-desktop-update-backup` 是否清理完整，并结合最新日志串联排查。
+   3. 如不一致，可在应用退出后检查用户数据目录中的 `.topgo-desktop-update-backup` 是否清理完整，并结合最新日志串联排查。
 
 Windows 平台建议使用 PowerShell 执行：
 
@@ -214,7 +216,7 @@ Get-FileHash .env,data\\stock_analysis.db,data\\stock_analysis.db-wal,data\\stoc
 1) 构建 React UI
 
 ```bash
-cd apps/dsa-web
+cd apps/topgo-web
 npm install
 npm run build
 ```
@@ -240,12 +242,12 @@ macOS 后端打包会显式加入 `src/services/screening/strategies` YAML 资�
 3) 打包 Electron 桌面应用
 
 ```bash
-cd apps/dsa-desktop
+cd apps/topgo-desktop
 npm install
 npm run build
 ```
 
-打包产物位于 `apps/dsa-desktop/dist/`。Windows 安装器会生成 `daily-stock-analysis-windows-installer-<tag>.exe`，安装向导中可选择安装目录。
+打包产物位于 `apps/topgo-desktop/dist/`。Windows 安装器会生成 `topgo-windows-installer-<tag>.exe`，安装向导中可选择安装目录。
 
 ## 目录结构
 
@@ -255,7 +257,7 @@ Windows 安装包模式下，安装器仅支持当前用户安装且已禁用管
 
 ```
 win-unpacked/
-  Daily Stock Analysis.exe    <- 双击启动
+  TOPGO.exe    <- 双击启动
   .env                        <- 用户配置文件（首次启动自动生成）
   data/
     stock_analysis.db         <- 数据库主文件
@@ -346,11 +348,58 @@ PyInstaller 打包时缺少模块，需要在 Windows 与 macOS 后端构建脚�
 
 Windows 分发现在有两种方式：
 
-1. 安装包：分发 `apps/dsa-desktop/dist/` 下的 `daily-stock-analysis-windows-installer-<tag>.exe`，用户安装时可自行选择目标目录
-2. 免安装包：将 `apps/dsa-desktop/dist/win-unpacked/` 整个文件夹打包发给用户
+1. 安装包：分发 `apps/topgo-desktop/dist/` 下的 `topgo-windows-installer-<tag>.exe`，用户安装时可自行选择目标目录
+2. 免安装包：将 `apps/topgo-desktop/dist/win-unpacked/` 整个文件夹打包发给用户
 
 使用 `win-unpacked` 免安装包时，用户只需：
 
 1. 解压文件夹
 2. 编辑 `.env` 配置 API Key 和股票列表
-3. 双击 `Daily Stock Analysis.exe` 启动
+3. 双击 `TOPGO.exe` 启动
+
+## 跨项目复用改造清单
+
+其他项目（如知易八官署、外贸自动化后台）复用这套 Electron + React + FastAPI 打包方案时，按以下清单逐项替换，避免漏改导致构建/发布链路断裂：
+
+### 1. 必改的品牌标识符（改错即发布失败）
+
+| 位置 | 现值 | 替换方式 |
+|---|---|---|
+| `apps/topgo-desktop/package.json` `productName` | `TOPGO` | 改成目标产品名（决定 `.app`/`.exe`/用户数据目录名） |
+| 同文件 `name` | `topgo-desktop` | 目标项目名 |
+| 同文件 `appId` | `com.topgo.desktop` | 目标反向域名 |
+| 同文件 `artifactName`（win/mac） | `topgo-*` | 目标产物前缀 |
+| `.github/workflows/desktop-release.yml` | `topgo-*` 写死校验 | 同步新前缀 |
+| `scripts/verify-desktop-updater-artifacts.ps1` | 同上 | 同步新前缀 |
+| `apps/topgo-desktop/main.js` | `Uninstall TOPGO.exe` | 跟 `productName` 同步 |
+| `apps/topgo-desktop/tests/main.test.js` | 20+ 处 `TOPGO` 路径 | 全部同步，否则测试失败 |
+
+### 2. 必改的后端标识
+
+| 项 | 现值 | 说明 |
+|---|---|---|
+| 后端可执行文件名 | `stock_analysis.exe` | PyInstaller 产物名，同步改构建脚本 |
+| 数据库名 | `stock_analysis.db`（+ `-wal`/`-shm`） | 换目标业务库名 |
+| 端口段 | `8000-8100` | 与知易 8000 冲突时改（如 `8200-8300`） |
+| 升级备份目录 | `.topgo-desktop-update-backup` | 换项目前缀 |
+
+### 3. 直接可复用、无需改的通用能力
+
+- **端口自动选择 + 同步后端**：Electron 在 `8000-8100` 选空闲端口，实时传给内置后端，不依赖 `.env` 的 `WEBUI_PORT`——解决"改端口后窗口仍等旧端口超时"
+- **PyInstaller 冻结校验**：`--collect-all` + 冻结产物内 `import` 探测（`futu`/`orjson`/`py_mini_racer`），防"只安装未携带 SDK"
+- **原生库版本锁定**：`mini-racer>=0.13.2` + `MiniRacer().eval('1+1')` 冷检查，防跨版本 DLL/ICU 拼装坑
+- **NSIS per-user 安装 + `.onVerifyInstDir`** 阻止系统保护目录；`win-unpacked` 免安装双分发
+- **electron-updater 元数据对齐**：`latest.yml` / `*.blockmap` / 安装包 tag 版本一致性校验
+- **macOS unsigned 签名清理**：`afterPack` hook + CI 校验，区分"预期 unsigned 拒绝"与"残缺签名阻断"
+- **分享图**：Electron 隐藏 Chromium 窗口渲染受限 HTML→PNG，免带 Playwright/wkhtmltoimage
+- **配置迁移**：旧 `.app` 内文件按"目标不存在才复制"迁到用户数据目录，不覆盖新配置
+- **品牌改名后的 userData 目录迁移**：`productName` 改变会换掉 `%APPDATA%/<产品名>` 目录名，`migrateLegacyUserDataDir()` 在打包态把旧目录文件迁到新目录（有 2 个单测覆盖），避免老用户"配置全丢"
+- **运行时文件更新留存**：静默安装前停后端 + 备份 `.env`/db/log，升级后 SHA256 比对
+
+### 4. 发版最小闭环
+
+```
+合并 main → 打语义化 tag → desktop-release 工作流自动构建
+→ 核对 target 产物 + latest.yml + *.blockmap 版本一致且可下载
+→ macOS 实测 unsigned 放行流程 / Windows 实测升级后文件留存
+```

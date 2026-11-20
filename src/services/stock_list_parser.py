@@ -291,7 +291,7 @@ class IndexRegistry:
     """Authoritative source for ``asset_type=index`` resolution.
 
     The registry is populated from the validated ``assetType=index`` rows of
-    ``apps/dsa-web/public/stocks.index.json`` (via :func:`default_index_registry`).
+    ``apps/topgo-web/public/stocks.index.json`` (via :func:`default_index_registry`).
     It builds three lookup maps at construction time:
 
     * canonical map — ``canonical_id -> entry``

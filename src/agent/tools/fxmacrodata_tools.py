@@ -62,7 +62,7 @@ def build_fxmacrodata_tools(client: FXMacroDataClient | None = None) -> list[FXM
                     provider = FXMacroDataClient(api_key=os.environ.get("FXMACRODATA_API_KEY") or "", timeout=30)
                 response = provider.execute(operation_name, arguments).as_dict()
                 response["provider_url"] = (
-                    "https://fxmacrodata.com/?utm_source=daily_stock_analysis"
+                    "https://fxmacrodata.com/?utm_source=topgo"
                     "&utm_medium=integration&utm_campaign=open_source_integrations&utm_content=app"
                 )
                 return response

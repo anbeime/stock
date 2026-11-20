@@ -21,7 +21,7 @@ Thank you for your interest in contributing! All kinds of contributions are welc
 ```bash
 # Clone the repository
 git clone https://github.com/anbeime/stock.git
-cd daily_stock_analysis
+cd topgo
 
 # Create a virtual environment
 python -m venv venv
@@ -84,7 +84,7 @@ PRs that only change ordinary `docs/**`, non-governance Markdown, or `LICENSE` k
 |-------|-------------|:--------:|
 | `backend-gate` | `scripts/ci_gate.sh` — py_compile + flake8 critical errors + `./scripts/test.sh code` + `./scripts/test.sh yfinance` + offline pytest | ✅ |
 | `docker-build` | Docker image build and key module import smoke test | ✅ |
-| `web-gate` | `npm run lint` + `npm run build` (triggered when `apps/dsa-web/` changes) | ✅ (when triggered) |
+| `web-gate` | `npm run lint` + `npm run build` (triggered when `apps/topgo-web/` changes) | ✅ (when triggered) |
 | `pr-review` | Automatic PR triggering is temporarily paused. Maintainers can still run it by PR number through `workflow_dispatch`; it reads PR metadata and diff through the GitHub API and never checks out or executes fork PR code. | ❌ (advisory) |
 
 Separately, the repository also has a non-blocking `network-smoke` workflow in `.github/workflows/network-smoke.yml`, but it is only triggered by `schedule` and `workflow_dispatch`, not by pull requests.
@@ -97,8 +97,8 @@ pip install -r requirements.txt
 pip install flake8 pytest
 ./scripts/ci_gate.sh
 
-# Frontend gate (only if you changed apps/dsa-web/)
-cd apps/dsa-web
+# Frontend gate (only if you changed apps/topgo-web/)
+cd apps/topgo-web
 npm ci
 npm run lint
 npm run build

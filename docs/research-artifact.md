@@ -91,7 +91,7 @@ structured_report?: ResearchArtifact | null
 
 Web：
 
-- 类型：`apps/dsa-web/src/types/researchArtifact.ts`
+- 类型：`apps/topgo-web/src/types/researchArtifact.ts`
 - `AnalysisReport.structuredReport`：可选消费入口
 
 ## 后续接入

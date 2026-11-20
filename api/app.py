@@ -193,7 +193,7 @@ _STOCK_INDEX_HEADERS = {
 
 
 def _bundled_stock_index_path() -> Path:
-    return Path(__file__).parent.parent / "apps" / "dsa-web" / "public" / _STOCK_INDEX_FILENAME
+    return Path(__file__).parent.parent / "apps" / "topgo-web" / "public" / _STOCK_INDEX_FILENAME
 
 
 async def _refresh_stock_index_cache_in_background(reason: str) -> None:
@@ -329,7 +329,7 @@ def create_app(static_dir: Optional[Path] = None) -> FastAPI:
     
     # 创建 FastAPI 实例
     app = FastAPI(
-        title="Daily Stock Analysis API",
+        title="TOPGO API",
         description=(
             "A股/港股/美股自选股智能分析系统 API\n\n"
             "## 功能模块\n"
@@ -452,7 +452,7 @@ def create_app(static_dir: Optional[Path] = None) -> FastAPI:
 <h1>&#9888;&#65039; Frontend Not Built</h1>
 <p>API is running, but the Web UI has not been built yet.</p>
 <p>Build the frontend first:</p>
-<p><code>cd apps/dsa-web &amp;&amp; npm install &amp;&amp; npm run build</code></p>
+<p><code>cd apps/topgo-web &amp;&amp; npm install &amp;&amp; npm run build</code></p>
 <p>Or start with auto-build:</p>
 <p><code>python main.py --serve-only</code></p>
 <div class="hint"><p>If you only need the API, visit <a href="/docs">/docs</a> for the interactive API documentation.</p></div>

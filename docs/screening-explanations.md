@@ -37,7 +37,7 @@
 
 ## 浏览器验收
 
-`cd apps/dsa-web && npx playwright test --config playwright.fixture.config.ts` 使用固定 API fixture 渲染真实页面，不依赖后端服务或密钥。CI 的 `web-gate` 安装 Chromium、执行验收，并将截图上传为 `web-ui-evidence-<head SHA>` artifact（保留 30 天）；截图不提交到仓库。该验收验证页面交互和展示，不代表实时 provider/LLM 可用性。
+`cd apps/topgo-web && npx playwright test --config playwright.fixture.config.ts` 使用固定 API fixture 渲染真实页面，不依赖后端服务或密钥。CI 的 `web-gate` 安装 Chromium、执行验收，并将截图上传为 `web-ui-evidence-<head SHA>` artifact（保留 30 天）；截图不提交到仓库。该验收验证页面交互和展示，不代表实时 provider/LLM 可用性。
 
 ## 旧版历史兼容
 

@@ -22,7 +22,7 @@ function Normalize-SemverText {
 }
 
 if (-not $DistDir) {
-  $DistDir = Join-Path $PSScriptRoot '..\apps\dsa-desktop\dist'
+  $DistDir = Join-Path $PSScriptRoot '..\apps\topgo-desktop\dist'
 }
 
 $resolvedDistDir = Resolve-Path $DistDir -ErrorAction SilentlyContinue
@@ -36,7 +36,7 @@ if (-not $distDirPath) {
   exit 0
 }
 
-$packageJsonPath = Join-Path $PSScriptRoot '..\apps\dsa-desktop\package.json'
+$packageJsonPath = Join-Path $PSScriptRoot '..\apps\topgo-desktop\package.json'
 if (-not (Test-Path $packageJsonPath)) {
   throw "Package manifest missing: $packageJsonPath"
 }
@@ -68,7 +68,7 @@ if ($normalizedLatestVersion -ne $normalizedReleaseTag) {
   throw "Version mismatch: latest.yml=$normalizedLatestVersion, expected=$normalizedReleaseTag"
 }
 
-$expectedInstallerFileName = "daily-stock-analysis-windows-installer-v$normalizedReleaseTag.exe"
+$expectedInstallerFileName = "topgo-windows-installer-v$normalizedReleaseTag.exe"
 
 if ($ymlText -match '(?m)^\s*path:\s*[''"]?([^''"\r\n]+)[''"]?\s*$') {
   $latestInstallerPath = $matches[1].Trim()

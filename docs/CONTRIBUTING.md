@@ -21,7 +21,7 @@
 ```bash
 # 克隆仓库
 git clone https://github.com/anbeime/stock.git
-cd daily_stock_analysis
+cd topgo
 
 # 创建虚拟环境
 python -m venv venv
@@ -94,8 +94,8 @@ pip install -r requirements.txt
 pip install flake8 pytest
 ./scripts/ci_gate.sh
 
-# 前端 gate（如修改了 apps/dsa-web）
-cd apps/dsa-web
+# 前端 gate（如修改了 apps/topgo-web）
+cd apps/topgo-web
 npm ci
 npm run lint
 npm run build

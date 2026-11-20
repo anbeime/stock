@@ -29,7 +29,7 @@
 
 Web 检测到有效环境规则时始终显示来源提示，即使数据库列表为空或环境规则当前全部被同条件的启用数据库规则覆盖。页面删除、禁用只操作数据库，不修改环境规则；禁用或删除数据库规则后，同条件环境规则可能重新参与轮询。需要停用环境规则时，在实际部署配置中修改 `AGENT_EVENT_ALERT_RULES_JSON` 并重新加载配置。本次不自动迁移配置，也不改变执行、冷却或推送语义。
 
-视觉回归：在 `apps/dsa-web` 运行 `npx playwright test --config playwright.fixture.config.ts`（无需后台或登录口令），使用受控 API 响应验收数据库空列表时的桌面/窄屏提示并生成 `test-results/fixtures/**/alerts-sources-*.png`。此测试验证 UI，不替代后台真实配置加载回归；专题文档没有英文对应版本。
+视觉回归：在 `apps/topgo-web` 运行 `npx playwright test --config playwright.fixture.config.ts`（无需后台或登录口令），使用受控 API 响应验收数据库空列表时的桌面/窄屏提示并生成 `test-results/fixtures/**/alerts-sources-*.png`。此测试验证 UI，不替代后台真实配置加载回归；专题文档没有英文对应版本。
 
 `AGENT_EVENT_ALERT_RULES_JSON` 作为 legacy 运行时规则来源继续保留，不自动迁移、删除、覆盖或改写用户已有 `.env` / Web 配置。
 
@@ -476,4 +476,4 @@ worker 会把 `triggered`、`skipped`、`degraded`、`failed` 写入 `alert_trig
 
 ### 页面来源提示的视觉验证
 
-运行 `cd apps/dsa-web && npx playwright install chromium && npx playwright test --config playwright.fixture.config.ts`，使用真实告警页面与拦截 API fixture，无需后台或登录口令。空数据库仍显示 2 条有效环境配置、1 条去重后规则及停用边界；覆盖 1440px 桌面和 390px 窄屏，无横向溢出。截图保存在 `apps/dsa-web/test-results/fixtures/`，由 web-gate 上传 `web-ui-evidence-<head SHA>` artifact，不入库。
+运行 `cd apps/topgo-web && npx playwright install chromium && npx playwright test --config playwright.fixture.config.ts`，使用真实告警页面与拦截 API fixture，无需后台或登录口令。空数据库仍显示 2 条有效环境配置、1 条去重后规则及停用边界；覆盖 1440px 桌面和 390px 窄屏，无横向溢出。截图保存在 `apps/topgo-web/test-results/fixtures/`，由 web-gate 上传 `web-ui-evidence-<head SHA>` artifact，不入库。

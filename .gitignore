@@ -88,8 +88,8 @@ _static_build_*/
 
 # ignore static files
 static/
-/apps/dsa-desktop/dist/
-/apps/dsa-desktop/node_modules/
+/apps/topgo-desktop/dist/
+/apps/topgo-desktop/node_modules/
 /node_modules/
 docs/specs/
 

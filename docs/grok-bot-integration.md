@@ -1,6 +1,6 @@
 # Grok Bot 集成说明
 
-本文说明 [daily_stock_analysis](https://github.com/anbeime/stock)（TOPGO）如何对接 **2026-08-11** 上线的 [Grok Bot](https://x.ai/bot)（xAI 的 AI teammate 产品，不是普通 Grok 聊天）。
+本文说明 [TOPGO](https://github.com/anbeime/stock)如何对接 **2026-08-11** 上线的 [Grok Bot](https://x.ai/bot)（xAI 的 AI teammate 产品，不是普通 Grok 聊天）。
 
 不新增 API、环境变量、provider 或运行时分支。Grok Bot 只消费现有 REST / Skill 契约。
 

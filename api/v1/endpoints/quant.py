@@ -26,18 +26,31 @@ import json
 import shutil
 import subprocess
 import sqlite3
+import sys
+from pathlib import Path
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
-# ---- 路径常量（与本机环境对齐）----
-DUAL_ENERGY_DIR = r"C:\D\zhiyi\quant_research\dual_energy"
-DSA_DB = r"C:\D\daily_stock_analysis\daily_stock_analysis-main\data\stock_analysis.db"
-SIGN_TXT = r"C:\F\sign.txt"
-ANTINET_SIGNALS_DIR = r"C:\F\antinet_signals"
-VENV_PY = r"C:\D\daily_stock_analysis\.venv\Scripts\python.exe"
+# ---- 路径常量（全部可移植：项目内路径基于 __file__ 推导，外部数据路径走环境变量）----
+# 红标：禁止把磁盘目录名写死在代码里——品牌改名/换机器/换目录都会指向不存在的路径，
+# 导致 K 线/回测取数静默失败。项目内路径动态推导；跨项目外部数据源走环境变量覆盖，
+# 默认值仅作为本机开发便利，部署到其他机器时设同名环境变量即可，无需改代码。
+_REPO_ROOT = Path(__file__).resolve().parents[3]  # endpoints/v1/api -> 项目根
+DSA_DB = str(_REPO_ROOT / "data" / "stock_analysis.db")
+# venv 位于项目根的上一级（本机布局 <parent>/<repo>/.venv）；exe 在 Win/类 Unix 下位置不同
+_VENV_DIR = _REPO_ROOT.parent / ".venv"
+VENV_PY = str(
+    os.environ.get("TOPGO_VENV_PY")
+    or str(_VENV_DIR / ("Scripts/python.exe" if os.name == "nt" else "bin/python"))
+)
+# 外部协作目录：知易量化研究（dual_energy 策略脚本）、QMT 实时预警日志与信号镜像。
+# 这些不在本仓库内，无法用 __file__ 推导，改为环境变量可配置（本机默认值保留）。
+DUAL_ENERGY_DIR = os.environ.get("TOPGO_DUAL_ENERGY_DIR") or r"C:\D\zhiyi\quant_research\dual_energy"
+SIGN_TXT = os.environ.get("TOPGO_SIGN_TXT") or r"C:\F\sign.txt"
+ANTINET_SIGNALS_DIR = os.environ.get("TOPGO_ANTINET_SIGNALS_DIR") or r"C:\F\antinet_signals"
 
 # 两个 router：
 # - quant_router：自研量化核心（/quant/*）。TOPGO drop-in 只挂这个。
@@ -49,7 +62,7 @@ compat_router = APIRouter()
 
 # ---- TOPGO 前端启动兼容桩 ----
 # TOPGO 前端首屏会探测自身后端的认证状态；本轻量服务无认证层，
-# 返回「无密码模式」结构（dsa-web api/auth.ts AuthStatusResponse）直接放行，
+# 返回「无密码模式」结构（topgo-web api/auth.ts AuthStatusResponse）直接放行，
 # 避免前端 404 卡在登录守卫。
 @compat_router.get("/auth/status")
 def dsa_auth_status_compat():
@@ -64,7 +77,7 @@ def dsa_auth_status_compat():
 
 # TOPGO 首页轮询的自家端点兼容桩：返回「诚实空态」（TOPGO 分析引擎未在本服务运行，
 # 历史记录/自选/任务本就为空），避免前端 404 与 SSE 重连风暴。
-# 结构依据 dsa-web 源码消费点：history→response.items；watchlist→stock_codes；
+# 结构依据 topgo-web 源码消费点：history→response.items；watchlist→stock_codes；
 # analysis/tasks→response.tasks；skills→{skills, default_skill_id}；setup→isComplete。
 @compat_router.get("/agent/skills")
 def dsa_skills_compat():
@@ -567,6 +580,187 @@ def push_qmt(req: PushRequest) -> Dict[str, Any]:
         except Exception:
             last_line = ""
     return {"ok": True, "as_of": asof, "log": log, "last_sign_line": last_line}
+
+
+def _ma(values: List[float], window: int) -> List[Optional[float]]:
+    """简单移动平均，前 window-1 位为 None（不做未来函数、不前向填充）。"""
+    out: List[Optional[float]] = []
+    running = 0.0
+    for i, v in enumerate(values):
+        running += v
+        if i >= window:
+            running -= values[i - window]
+        out.append(round(running / window, 3) if i >= window - 1 else None)
+    return out
+
+
+@quant_router.get("/quant/chart/{code}")
+def get_chart(code: str, days: int = 120) -> Dict[str, Any]:
+    """K 线聚合端点：真实 OHLCV + MA5/10/20/60 + 买卖点标记。
+
+    数据源全部现成、零新增依赖：
+    - K 线：复用 TOPGO StockService.get_history_data（Tushare/PyTDX/AKShare 真数据）
+    - 买入点 B：
+        * TOPGO decision_signals 里该股 action∈{buy,add,hold} 且带 entry_low/high
+          -> 在 created_at 对应交易日附近画 B，价格用 entry_low
+        * 擒龙技术信号 signals_dragon_*.csv 里 code 命中 signal_date/ref_close -> 画 B
+    - 卖出点 S：decision_signals 里 action∈{reduce,sell,close} -> 画 S，价格用 target_price/stop_loss
+    - 决策区间：最新一条 decision_signal 的 entry_low/entry_high/stop_loss/target_price
+      （截图里的 28.60 标注即 entry_high）
+
+    均线在前端二次计算亦可，但放后端一次算好，前端只负责画，口径统一。
+    """
+    code = (code or "").strip()
+    if not code.isdigit() or len(code) != 6:
+        raise HTTPException(status_code=400, detail="invalid stock code")
+
+    # 1) K 线（复用 TOPGO 取数，真实数据）
+    try:
+        from src.services.stock_service import StockService
+        hist = StockService().get_history_data(code, period="daily", days=days)
+        rows = hist.get("data", []) if isinstance(hist, dict) else []
+    except Exception as e:
+        return {"ok": False, "code": code, "error": "kline source: %s" % e,
+                "candles": [], "marks": [], "ma": {}, "levels": None}
+    candles = [
+        {
+            "date": str(r.get("date") or "")[:10],
+            "open": _f(r.get("open")), "high": _f(r.get("high")),
+            "low": _f(r.get("low")), "close": _f(r.get("close")),
+            "volume": _f(r.get("volume")),
+        }
+        for r in rows if r.get("date") and r.get("close") is not None
+    ]
+    if not candles:
+        return {"ok": True, "code": code, "name": (hist or {}).get("stock_name"),
+                "candles": [], "marks": [], "ma": {}, "levels": None,
+                "note": "无 K 线数据（非交易日或数据源未覆盖）"}
+
+    dates = [c["date"] for c in candles]
+    closes = [c["close"] for c in candles]
+    ma = {
+        "ma5": _ma(closes, 5), "ma10": _ma(closes, 10),
+        "ma20": _ma(closes, 20), "ma60": _ma(closes, 60),
+    }
+
+    def nearest_idx(date_str: str) -> Optional[int]:
+        """把信号日期对齐到最近的交易日（信号可能落在周末/停牌日）。"""
+        if not date_str:
+            return None
+        d = str(date_str)[:10]
+        if d in dates:
+            return dates.index(d)
+        later = [i for i, x in enumerate(dates) if x > d]
+        return later[0] if later else (len(dates) - 1 if dates else None)
+
+    marks: List[Dict[str, Any]] = []
+    levels: Optional[Dict[str, Any]] = None
+
+    # 2) TOPGO 决策信号 -> B/S 标记 + 决策价位区间（真实 DB）
+    try:
+        conn = sqlite3.connect(DSA_DB)
+        conn.row_factory = sqlite3.Row
+        dr = conn.execute(
+            "SELECT action, action_label, entry_low, entry_high, stop_loss, target_price, "
+            "created_at, status, reason FROM decision_signals WHERE stock_code=? "
+            "ORDER BY created_at DESC LIMIT 20", (code,)
+        ).fetchall()
+        # 同一交易日同一方向只保留最新一条决策（用户反复重跑分析会产生多条 expired 历史记录）
+        # key=(映射idx, kind)，value=最新记录；避免同一天冒出多个重复买卖点
+        latest_by_day: Dict[tuple, Dict[str, Any]] = {}
+        for row in dr:
+            d = dict(row)
+            idx = nearest_idx(d.get("created_at") or "")
+            if idx is None:
+                continue
+            action = (d.get("action") or "").lower()
+            if action in ("reduce", "sell", "close"):
+                kind = "S"
+            elif action in ("buy", "add", "hold"):
+                kind = "B"
+            else:
+                # watch/avoid 等非交易决策不入买卖点，但可继续用于 levels
+                kind = None
+            if kind is not None:
+                key = (idx, kind)
+                # dr 已按 created_at DESC，第一条即最新；仅保留首次出现
+                if key not in latest_by_day:
+                    latest_by_day[key] = (d, idx, kind)
+            if levels is None and any(d.get(k) is not None for k in
+                                      ("entry_low", "entry_high", "stop_loss", "target_price")):
+                levels = {"entry_low": _f(d.get("entry_low")),
+                          "entry_high": _f(d.get("entry_high")),
+                          "stop_loss": _f(d.get("stop_loss")),
+                          "target_price": _f(d.get("target_price")),
+                          "action": d.get("action"), "action_label": d.get("action_label"),
+                          "status": d.get("status"),
+                          "as_of": (d.get("created_at") or "")[:10]}
+        for d, idx, kind in latest_by_day.values():
+            action = (d.get("action") or "").lower()
+            if kind == "S":
+                px = _f(d.get("target_price")) or candles[idx]["close"]
+                marks.append({"kind": "S", "date": dates[idx], "index": idx,
+                              "price": px, "label": d.get("action_label") or "卖出",
+                              "source": "dsa_decision"})
+            else:
+                px = _f(d.get("entry_low")) or candles[idx]["close"]
+                marks.append({"kind": "B", "date": dates[idx], "index": idx,
+                              "price": px, "label": d.get("action_label") or "买入",
+                              "source": "dsa_decision"})
+        conn.close()
+    except Exception:
+        pass
+
+    # 3) 擒龙技术买入信号 -> B（真实 CSV）
+    try:
+        csvp, _, _ = _latest_signal_file()
+        if csvp:
+            with open(csvp, encoding="utf-8-sig", newline="") as f:
+                for row in csv.DictReader(f):
+                    if (row.get("code") or "").strip() != code:
+                        continue
+                    idx = nearest_idx(row.get("signal_date") or "")
+                    if idx is None:
+                        continue
+                    marks.append({"kind": "B", "date": dates[idx], "index": idx,
+                                  "price": _f(row.get("ref_close")) or candles[idx]["close"],
+                                  "label": "擒龙买入", "source": "dragon"})
+    except Exception:
+        pass
+
+    marks.sort(key=lambda m: m["index"])
+
+    # 4) 通达信主图指标叠加（纯 Python 实现，零新增依赖；未来函数已标注）
+    overlay = {}
+    try:
+        import importlib.util as _ilu
+        _ov_path = os.path.join(DUAL_ENERGY_DIR, "tdx_overlay.py")
+        _spec = _ilu.spec_from_file_location("_tdx_overlay", _ov_path)
+        if _spec and _spec.loader:
+            _ov = _ilu.module_from_spec(_spec)
+            _spec.loader.exec_module(_ov)
+            overlay = _ov.compute_overlay(candles)
+    except Exception as e:
+        overlay = {"note": "主图指标计算失败: %s" % e}
+
+    # 5) 通达信多空能量副图（纯 Python 实现，零新增依赖）
+    subchart = {}
+    try:
+        import importlib.util as _ilu2
+        _ilu = _ilu2  # 独立于主图步骤，避免其异常导致未绑定
+        _sp_path = os.path.join(DUAL_ENERGY_DIR, "tdx_subchart.py")
+        _sp_spec = _ilu.spec_from_file_location("_tdx_subchart", _sp_path)
+        if _sp_spec and _sp_spec.loader:
+            _sp = _ilu.module_from_spec(_sp_spec)
+            _sp_spec.loader.exec_module(_sp)
+            subchart = _sp.compute_subchart(candles)
+    except Exception as e:
+        subchart = {"note": "副图指标计算失败: %s" % e}
+
+    return {"ok": True, "code": code, "name": (hist or {}).get("stock_name"),
+            "as_of": dates[-1], "count": len(candles),
+            "candles": candles, "ma": ma, "marks": marks, "levels": levels,
+            "overlay": overlay, "subchart": subchart}
 
 
 # ---- 组合 router：独立轻量启动器（quant_server.py）用 ----

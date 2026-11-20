@@ -56,7 +56,7 @@ verify_unsigned_dmg() {
 
   hdiutil attach "${dmg_path}" -nobrowse -readonly -mountpoint "${mount_dir}" >/dev/null
   mounted=true
-  mounted_app="${mount_dir}/Daily Stock Analysis.app"
+  mounted_app="${mount_dir}/TOPGO.app"
   if [[ ! -d "${mounted_app}" ]]; then
     echo "ERROR: application bundle not found in mounted DMG: ${mounted_app}"
     exit 1
@@ -78,7 +78,7 @@ if [[ ! -d "${ROOT_DIR}/dist/backend/stock_analysis" ]]; then
   exit 1
 fi
 
-pushd "${ROOT_DIR}/apps/dsa-desktop" >/dev/null
+pushd "${ROOT_DIR}/apps/topgo-desktop" >/dev/null
 
 package_lock_hash() {
   if command -v shasum >/dev/null 2>&1; then
@@ -154,7 +154,7 @@ else
 fi
 
 shopt -s nullglob
-app_candidates=(dist/mac*/"Daily Stock Analysis.app")
+app_candidates=(dist/mac*/"TOPGO.app")
 dmg_candidates=(dist/*.dmg)
 shopt -u nullglob
 

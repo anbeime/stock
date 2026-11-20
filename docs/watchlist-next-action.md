@@ -38,7 +38,7 @@ Web 首页的自选股列表按单行聚合展示每只股票的当前处理状�
 
 ## 浏览器验收
 
-`cd apps/dsa-web && npx playwright install chromium && npx playwright test --config playwright.fixture.config.ts`
+`cd apps/topgo-web && npx playwright install chromium && npx playwright test --config playwright.fixture.config.ts`
 加载真实 HomeStockWorkspace 和样式，以确定性 props 覆盖今日有报告、无报告和 processing 行。
 900px、1280px 视口分别使用首页的 256px、288px 侧栏宽度，另覆盖 390px 窄屏；验证信号可见、无横向溢出、读屏说明和待分析计数。
 GitHub web-gate 将截图上传到 `web-ui-evidence-<head SHA>` artifact，截图不入库。

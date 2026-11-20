@@ -1,5 +1,5 @@
 # ===================================
-# Daily Stock Analysis - dependencies
+# TOPGO - dependencies
 # ===================================
 
 # Core dependencies

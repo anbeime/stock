@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use TOPGO in research, please cite the paper below."
-title: "Daily Stock Analysis (TOPGO)"
+title: "TOPGO"
 type: software
 authors:
   - family-names: "Zhu"

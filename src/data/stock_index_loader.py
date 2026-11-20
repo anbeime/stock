@@ -60,7 +60,7 @@ def get_stock_index_candidate_paths() -> tuple[Path, ...]:
     repo_root = Path(__file__).resolve().parents[2]
     return (
         get_remote_stock_index_cache_path(),
-        repo_root / "apps" / "dsa-web" / "public" / _STOCK_INDEX_FILENAME,
+        repo_root / "apps" / "topgo-web" / "public" / _STOCK_INDEX_FILENAME,
         repo_root / "static" / _STOCK_INDEX_FILENAME,
     )
 
@@ -433,7 +433,7 @@ def _load_active_index_rows() -> list:
 
         # First pass: find the bundled candidate's active index canonical set
         # as the non-regression baseline. The bundled candidate is the
-        # ``apps/dsa-web/public/stocks.index.json`` path (identified from the
+        # ``apps/topgo-web/public/stocks.index.json`` path (identified from the
         # declared candidate order, not the first non-remote candidate ordered
         # by mtime), and its index rows must pass semantic validation before
         # they become the baseline.
@@ -548,11 +548,11 @@ def _get_bundled_stock_index_path(
     candidate_paths: Iterable[Path],
     remote_path: Path,
 ) -> Path | None:
-    """Return the bundled ``apps/dsa-web/public/stocks.index.json`` path.
+    """Return the bundled ``apps/topgo-web/public/stocks.index.json`` path.
 
     The bundled candidate is the deterministic non-remote baseline for the
     remote non-regression check, independent of mtime ordering. It is the
-    declared ``apps/dsa-web/public`` candidate (the non-remote, non-legacy
+    declared ``apps/topgo-web/public`` candidate (the non-remote, non-legacy
     ``static`` candidate in the declared candidate order), not the remote cache
     and not the legacy ``static`` fallback.
     """

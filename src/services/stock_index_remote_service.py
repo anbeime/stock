@@ -21,8 +21,9 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # 红标：自己的仓库优先；仓库尚未建立/未含该文件时自动回退原项目镜像，避免股票索引断供。
 DEFAULT_STOCK_INDEX_REMOTE_URL = (
     "https://raw.githubusercontent.com/anbeime/stock/"
-    "main/apps/dsa-web/public/stocks.index.json"
+    "main/apps/topgo-web/public/stocks.index.json"
 )
+# 回退源指向上游项目真实仓库路径（历史 identifier，上游目录名不随本项目品牌改名变化）
 FALLBACK_STOCK_INDEX_REMOTE_URL = (
     "https://raw.githubusercontent.com/ZhuLinsen/daily_stock_analysis/"
     "main/apps/dsa-web/public/stocks.index.json"

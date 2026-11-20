@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Derived from AlphaSift revision 9f522747caafd3c0b1ddb7e14d5cf44c8580b6cf.
-# Licensed under Apache-2.0 and modified for daily_stock_analysis.
+# Licensed under Apache-2.0 and modified for topgo.
 """screen_score calculation."""
 
 import pandas as pd

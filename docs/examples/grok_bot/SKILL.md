@@ -1,9 +1,9 @@
 ---
-name: daily-stock-analysis
-description: 调用 daily_stock_analysis API 做股票分析。当用户说「分析茅台」「analyze AAPL」「帮我看看 600519」或要大盘复盘时使用。优先用股票代码。
+name: topgo
+description: 调用 topgo API 做股票分析。当用户说「分析茅台」「analyze AAPL」「帮我看看 600519」或要大盘复盘时使用。优先用股票代码。
 ---
 
-# daily_stock_analysis
+# topgo
 
 本 Skill 供 Grok Bot（2026-08-11 AI teammate）使用。通过 HTTP 调用已部署的 TOPGO，不要把 Bot 配成 LiteLLM provider。
 

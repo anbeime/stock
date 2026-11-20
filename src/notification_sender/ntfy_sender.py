@@ -86,7 +86,7 @@ class NtfySender:
 
         headers = {
             "Content-Type": "application/json; charset=utf-8",
-            "User-Agent": "daily_stock_analysis",
+            "User-Agent": "topgo",
         }
         token = (self._ntfy_token or "").strip()
         if token:

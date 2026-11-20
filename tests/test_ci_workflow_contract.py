@@ -88,13 +88,13 @@ def test_heavy_ci_jobs_are_path_filtered_and_backend_tests_are_sharded() -> None
     assert frontend_filter_step["with"]["predicate-quantifier"] == "every"
     assert backend_filters["backend_non_web"] == [
         "**",
-        "!apps/dsa-web/**",
+        "!apps/topgo-web/**",
         "!docs/**",
         "!**/*.md",
         "!LICENSE",
     ]
     assert frontend_filters["frontend_code"] == [
-        "apps/dsa-web/**",
+        "apps/topgo-web/**",
         "!**/*.md",
     ]
     assert "docker:" in filters
@@ -102,9 +102,9 @@ def test_heavy_ci_jobs_are_path_filtered_and_backend_tests_are_sharded() -> None
     assert set(
         _expand_brace_pattern(parsed_filters["backend_web_contract"][0])
     ) == {
-        "apps/dsa-web/public/**",
-        "apps/dsa-web/src/components/settings/llmProviderTemplates.ts",
-        "apps/dsa-web/src/locales/settingsHelp.ts",
+        "apps/topgo-web/public/**",
+        "apps/topgo-web/src/components/settings/llmProviderTemplates.ts",
+        "apps/topgo-web/src/locales/settingsHelp.ts",
     }
     assert parsed_filters["backend_web_contract"][1] == "!**/*.md"
     assert set(
@@ -203,30 +203,30 @@ def test_backend_filter_covers_mixed_changes_and_shared_web_assets() -> None:
     assert outputs(["docs/CONTRIBUTING.md"]) == (False, False, False, False)
     assert outputs(["README.md"]) == (False, False, False, False)
     assert outputs(["LICENSE"]) == (False, False, False, False)
-    assert outputs(["apps/dsa-web/README.md"]) == (False, False, False, False)
-    assert outputs(["apps/dsa-desktop/README.md"]) == (False, False, False, False)
+    assert outputs(["apps/topgo-web/README.md"]) == (False, False, False, False)
+    assert outputs(["apps/topgo-desktop/README.md"]) == (False, False, False, False)
     assert outputs(["src/config.py"]) == (True, True, False, False)
     assert outputs(["requirements.txt"]) == (True, True, False, True)
-    assert outputs(["apps/dsa-web/src/App.tsx"]) == (False, True, True, False)
-    assert outputs(["apps/dsa-web/src/App.tsx", "docs/CHANGELOG.md"]) == (
+    assert outputs(["apps/topgo-web/src/App.tsx"]) == (False, True, True, False)
+    assert outputs(["apps/topgo-web/src/App.tsx", "docs/CHANGELOG.md"]) == (
         True,
         True,
         True,
         False,
     )
-    assert outputs(["apps/dsa-web/src/App.tsx", "src/config.py"]) == (
+    assert outputs(["apps/topgo-web/src/App.tsx", "src/config.py"]) == (
         True,
         True,
         True,
         False,
     )
-    assert outputs(["apps/dsa-web/public/stocks.index.json"])[0] is True
-    assert outputs(["apps/dsa-web/public/runtime/new-asset.json"])[0] is True
+    assert outputs(["apps/topgo-web/public/stocks.index.json"])[0] is True
+    assert outputs(["apps/topgo-web/public/runtime/new-asset.json"])[0] is True
 
 
 def test_browser_fixture_and_default_smoke_entrypoints_stay_separate() -> None:
-    smoke = _read("apps/dsa-web/playwright.config.ts")
-    fixture = _read("apps/dsa-web/playwright.fixture.config.ts")
+    smoke = _read("apps/topgo-web/playwright.config.ts")
+    fixture = _read("apps/topgo-web/playwright.fixture.config.ts")
     assert "testIgnore: '**/fixtures/**'" in smoke
     assert "testDir: './e2e/fixtures'" in fixture
     assert "webServer:" in fixture

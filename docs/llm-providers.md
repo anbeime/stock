@@ -45,7 +45,7 @@ Codex App Server 问股后端已移除。`AGENT_BACKEND` 仅支持 `auto`（推�
 
 ### Modelflare
 
-[注册 Modelflare](https://modelflare.dev/sign-up?utm_source=github&utm_campaign=daily_stock_analysis)，创建 API Key 后使用 OpenAI-compatible 渠道：
+[注册 Modelflare](https://modelflare.dev/sign-up?utm_source=github&utm_campaign=topgo)，创建 API Key 后使用 OpenAI-compatible 渠道：
 
 ```env
 MODELFLARE_KEY=sk-xxx

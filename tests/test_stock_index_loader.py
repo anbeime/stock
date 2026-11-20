@@ -77,7 +77,7 @@ class TestStockIndexLoader(unittest.TestCase):
                 paths = stock_index_loader.get_stock_index_candidate_paths()
 
             self.assertEqual(paths[0], remote_cache)
-            self.assertTrue(paths[1].as_posix().endswith("apps/dsa-web/public/stocks.index.json"))
+            self.assertTrue(paths[1].as_posix().endswith("apps/topgo-web/public/stocks.index.json"))
             self.assertTrue(paths[2].as_posix().endswith("static/stocks.index.json"))
 
     def test_get_stock_name_index_map_is_cached_after_first_load(self):
@@ -620,7 +620,7 @@ class TestStockIndexLoader(unittest.TestCase):
 
     def test_load_active_index_rows_bundled_baseline_ignores_newer_legacy_static(self):
         """Gap 4: the bundled baseline comes from the declared bundled candidate
-        (``apps/dsa-web/public``), not the first non-remote candidate ordered by
+        (``apps/topgo-web/public``), not the first non-remote candidate ordered by
         mtime. A newer legacy ``static`` candidate must not become the baseline."""
         with tempfile.TemporaryDirectory() as temp_dir:
             remote_cache = Path(temp_dir) / "cache" / "stocks.index.json"

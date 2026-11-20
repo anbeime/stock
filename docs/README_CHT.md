@@ -144,7 +144,7 @@
 
 ```bash
 # 克隆項目
-git clone https://github.com/anbeime/stock.git && cd daily_stock_analysis
+git clone https://github.com/anbeime/stock.git && cd topgo
 
 # 安裝依賴
 pip install -r requirements.txt
@@ -241,7 +241,7 @@ python main.py --webui-only
   <tr>
     <td width="92" valign="top"><strong>合作郵箱</strong></td>
     <td valign="top">
-      <a href="mailto:anbeime@qq.com">anbeime@qq.com</a><br>
+      <a href="mailto:13632833907@qq.com">13632833907@qq.com</a><br>
       項目諮詢、部署支援與功能擴展
     </td>
   </tr>

@@ -33,13 +33,13 @@ jobs:
             backend_web_contract:
               # Public assets are shared runtime inputs: Python loaders and
               # packaged deployments may consume them outside the Web app.
-              - '{apps/dsa-web/public/**,apps/dsa-web/src/components/settings/llmProviderTemplates.ts,apps/dsa-web/src/locales/settingsHelp.ts}'
+              - '{apps/topgo-web/public/**,apps/topgo-web/src/components/settings/llmProviderTemplates.ts,apps/topgo-web/src/locales/settingsHelp.ts}'
               - '!**/*.md'
             docker:
-              - '{*.py,api/**,bot/**,data_provider/**,src/**,strategies/**,apps/dsa-web/**,docker/**,requirements.txt,.dockerignore,.github/workflows/ci.yml}'
+              - '{*.py,api/**,bot/**,data_provider/**,src/**,strategies/**,apps/topgo-web/**,docker/**,requirements.txt,.dockerignore,.github/workflows/ci.yml}'
               - '!**/*.md'
             futu_packaging:
-              - '{requirements.txt,main.py,src/brokers/futu/**,scripts/build-backend.ps1,scripts/build-backend-macos.sh,scripts/macos-signature-audit.sh,scripts/build-all.ps1,scripts/build-all-macos.sh,apps/dsa-desktop/**,.github/workflows/ci.yml,.github/workflows/desktop-release.yml}'
+              - '{requirements.txt,main.py,src/brokers/futu/**,scripts/build-backend.ps1,scripts/build-backend-macos.sh,scripts/macos-signature-audit.sh,scripts/build-all.ps1,scripts/build-all-macos.sh,apps/topgo-desktop/**,.github/workflows/ci.yml,.github/workflows/desktop-release.yml}'
               - '!**/*.md'
       - name: 🧭 Filter backend-safe frontend paths
         id: backend-filter
@@ -49,7 +49,7 @@ jobs:
           filters: |
             backend_non_web:
               - '**'
-              - '!apps/dsa-web/**'
+              - '!apps/topgo-web/**'
               - '!docs/**'
               - '!**/*.md'
               - '!LICENSE'
@@ -60,7 +60,7 @@ jobs:
           predicate-quantifier: every
           filters: |
             frontend_code:
-              - 'apps/dsa-web/**'
+              - 'apps/topgo-web/**'
               - '!**/*.md'
 
   ai-governance:
@@ -209,10 +209,10 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: apps/dsa-web/package-lock.json
+          cache-dependency-path: apps/topgo-web/package-lock.json
       - name: 📦 Install Web dependencies
         shell: pwsh
-        run: npm ci --prefix apps/dsa-web
+        run: npm ci --prefix apps/topgo-web
       - name: 🧊 Build and verify frozen backend
         shell: pwsh
         run: powershell -ExecutionPolicy Bypass -File scripts/build-backend.ps1
@@ -236,9 +236,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: apps/dsa-web/package-lock.json
+          cache-dependency-path: apps/topgo-web/package-lock.json
       - name: 📦 Install Web dependencies
-        run: npm ci --prefix apps/dsa-web
+        run: npm ci --prefix apps/topgo-web
       - name: 🧊 Build and verify frozen backend
         run: bash scripts/build-backend-macos.sh
       - name: 📦 Build and verify unsigned desktop package
@@ -251,7 +251,7 @@ jobs:
     if: needs.changes.outputs.frontend == 'true'
     defaults:
       run:
-        working-directory: apps/dsa-web
+        working-directory: apps/topgo-web
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v5
@@ -260,7 +260,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: apps/dsa-web/package-lock.json
+          cache-dependency-path: apps/topgo-web/package-lock.json
       - name: 📦 Install
         run: npm ci
       - name: 🔎 Lint
@@ -280,6 +280,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web-ui-evidence-${{ github.event.pull_request.head.sha }}
-          path: apps/dsa-web/test-results/fixtures/
+          path: apps/topgo-web/test-results/fixtures/
           if-no-files-found: warn
           retention-days: 7

@@ -155,7 +155,7 @@ http://your-domain.com:8000
 
 先区分两件事：
 
-1. **Docker 镜像发布版本**：看你部署时使用的镜像 tag，例如 `ghcr.io/zhulinsen/daily_stock_analysis:v3.12.0`。仓库的 Docker 发布由 `.github/workflows/docker-publish.yml` 按 `v*.*.*` Git tag 触发，所以 Docker 版本应以镜像 tag / GitHub Releases 为准。
+1. **Docker 镜像发布版本**：看你部署时使用的镜像 tag，例如 `ghcr.io/zhulinsen/topgo:v3.12.0`。仓库的 Docker 发布由 `.github/workflows/docker-publish.yml` 按 `v*.*.*` Git tag 触发，所以 Docker 版本应以镜像 tag / GitHub Releases 为准。
 2. **当前页面加载的前端构建**：看 WebUI “系统设置”页里的版本信息卡片，用来确认浏览器拿到的静态资源是否已经更新。
 
 也就是说，**“系统设置”里的版本信息更适合判断前端是否重建成功，不等同于 Docker 镜像发布版本**。
@@ -177,12 +177,12 @@ commit；如果构建环境既没有发布信息也没有 Git 元数据，版本
 
 ```yaml
 # 方式 1：看 docker-compose / 部署脚本里的 image tag
-image: ghcr.io/zhulinsen/daily_stock_analysis:v3.12.0
+image: ghcr.io/zhulinsen/topgo:v3.12.0
 ```
 
 ```bash
 # 方式 2：回看你的拉取命令
-docker pull ghcr.io/zhulinsen/daily_stock_analysis:v3.12.0
+docker pull ghcr.io/zhulinsen/topgo:v3.12.0
 ```
 
 如果你一直使用 `latest`，建议改成显式版本 tag；否则很难仅凭容器内页面信息判断自己是否已经重复更新到同一版本。
@@ -190,7 +190,7 @@ docker pull ghcr.io/zhulinsen/daily_stock_analysis:v3.12.0
 在确认本地前端打包链路时，建议执行以下命令作为最小验证闭环：
 
 ```bash
-cd apps/dsa-web
+cd apps/topgo-web
 npm ci
 npm run lint
 npm run build
@@ -265,7 +265,7 @@ docker-compose -f ./docker/docker-compose.yml up -d
 **直接部署用户**：先确保已安装 Node.js 18+（推荐 20+），然后手动构建前端：
 
 ```bash
-cd apps/dsa-web
+cd apps/topgo-web
 npm ci
 npm run build
 cd ../..

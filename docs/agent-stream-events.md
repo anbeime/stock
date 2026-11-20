@@ -161,7 +161,7 @@ python -m pytest tests/test_agent_stream_events.py tests/test_agent_sse_cleanup.
 ```
 
 ```bash
-cd apps/dsa-web
+cd apps/topgo-web
 npm test -- src/stores/__tests__/agentChatStore.test.ts src/pages/__tests__/ChatPage.test.tsx
 ```
 

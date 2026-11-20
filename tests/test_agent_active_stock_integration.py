@@ -2290,7 +2290,7 @@ def bundled_chat_stock_index(tmp_path, monkeypatch):
     from pathlib import Path
     from src.data import stock_index_loader
 
-    bundled = Path(__file__).resolve().parents[1] / "apps/dsa-web/public/stocks.index.json"
+    bundled = Path(__file__).resolve().parents[1] / "apps/topgo-web/public/stocks.index.json"
     stock_index_loader.clear_stock_index_cache()
     monkeypatch.setattr(stock_index_loader, "get_stock_index_candidate_paths", lambda: (bundled,))
     monkeypatch.setattr(stock_index_loader, "get_remote_stock_index_cache_path", lambda: tmp_path / "absent.json")

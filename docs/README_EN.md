@@ -134,7 +134,7 @@ Open the `Actions` tab and click `I understand my workflows, go ahead and enable
 
 #### 4. Manual Test
 
-`Actions` -> `Daily Stock Analysis` -> `Run workflow` -> `Run workflow`.
+`Actions` -> `TOPGO` -> `Run workflow` -> `Run workflow`.
 
 #### Done
 
@@ -144,7 +144,7 @@ By default, the workflow runs every weekday at 18:00 Beijing time and skips non-
 
 ```bash
 # Clone the project
-git clone https://github.com/anbeime/stock.git && cd daily_stock_analysis
+git clone https://github.com/anbeime/stock.git && cd topgo
 
 # Install dependencies
 pip install -r requirements.txt
@@ -241,7 +241,7 @@ After configuring any available AI API key, the Web `/chat` page can use strateg
   <tr>
     <td width="92" valign="top"><strong>Email</strong></td>
     <td valign="top">
-      <a href="mailto:anbeime@qq.com">anbeime@qq.com</a><br>
+      <a href="mailto:13632833907@qq.com">13632833907@qq.com</a><br>
       Project consulting, deployment support, and feature extensions
     </td>
   </tr>
